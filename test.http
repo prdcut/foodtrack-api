@@ -1,0 +1,32 @@
+get http://localhost:8080/food-list
+
+###
+
+post http://localhost:8080/food-list
+Content-Type: application/json
+
+{
+  "name":"pasta uncoocked",
+  "weight": 100,
+  "nutritionalValues": {
+      "protein": 13.5,
+      "carbs": 69.7,
+      "fat": 1.4,
+      "calories": 352
+    }
+}
+
+###
+
+delete http://localhost:8080/food-list/7e36f05a-953d-4ea3-83d1-c3875de88593
+
+###
+
+put http://localhost:8080/food-list/chicken/protein/27
+
+###
+
+put http://localhost:8080/food-list/chicken/carbs/0
+
+###
+put http://localhost:8080/food-list/chicken/fat/0
