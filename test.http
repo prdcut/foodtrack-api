@@ -2,23 +2,28 @@ get http://localhost:8080/food-list
 
 ###
 
+get http://localhost:8080/food-list/salmon
+
+###
+
 post http://localhost:8080/food-list
 Content-Type: application/json
 
 {
-  "name":"pasta uncoocked",
-  "weight": 100,
-  "nutritionalValues": {
-      "protein": 13.5,
-      "carbs": 69.7,
-      "fat": 1.4,
-      "calories": 352
+  "name":"banana",
+  "weight": null,
+  "quantity": 1,
+  "macros": {
+      "protein": 1,
+      "carbs": 28,
+      "fat": 0,
+      "calories": 110
     }
 }
 
 ###
 
-delete http://localhost:8080/food-list/7e36f05a-953d-4ea3-83d1-c3875de88593
+delete http://localhost:8080/food-list/oats
 
 ###
 

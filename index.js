@@ -1,89 +1,90 @@
 const express = require('express'),
   bodyParser = require('body-parser'),
-  uuid = require('uuid');
+  mongoose = require('mongoose');
 
 const app = express();
+const Models = require('./models.js');
+const Food = Models.Food;
+
+mongoose.connect('mongodb://localhost:27017/foodtrack', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
 app.use(bodyParser.json());
-
-let foodList = [
-  {
-    name: 'chicken',
-    weight: '100',
-    quantity: '--',
-    macros: {
-      protein: '27',
-      carbs: '0',
-      fat: '3,6',
-      calories: '138',
-    },
-  },
-  {
-    name: 'salmon',
-    weight: '100',
-    quantity: '--',
-    macros: {
-      protein: '25',
-      carbs: '0',
-      fat: '11',
-      calories: '200',
-    },
-  },
-  {
-    name: 'tuna',
-    weight: '100',
-    quantity: '--',
-    macros: {
-      protein: '23',
-      carbs: '0',
-      fat: '12',
-      calories: '200',
-    },
-  },
-];
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // Gets the list of data about ALL foodList
-
 app.get('/food-list', (req, res) => {
-  res.json(foodList);
-});
-// Gets the data about a single food by name
-
-app.get('/food-list/:name', (req, res) => {
-  res.json(
-    foodList.find(foodList => {
-      return foodList.name === req.params.name;
+  Food.find()
+    .then(food => {
+      res.status(201).json(food);
     })
-  );
+    .catch(error => {
+      console.log(error);
+      res.status(500).send(`Error ${error}`);
+    });
+});
+
+// Gets the data about a single food by name
+app.get('/food-list/:name', (req, res) => {
+  Food.findOne({ name: req.body.name })
+    .then(food => {
+      res.json(food);
+    })
+    .catch(error => {
+      console.log(error);
+      res.status(500).send(`Error ${error}`);
+    });
 });
 
 // Adds data for a new food to our list of foodList.
 app.post('/food-list', (req, res) => {
-  let newFood = req.body;
-
-  if (!newFood.name && !newFood.weight && !newFood.macros) {
-    const message =
-      'Missing name, weight and nutritional values in request body';
-    res.status(400).send(message);
-  } else {
-    newFood.id = uuid.v4();
-    foodList.push(newFood);
-    res.status(201).send(newFood);
-  }
+  Food.findOne({ name: req.body.name })
+    .then(food => {
+      if (food) {
+        return res.status(400).send(`${req.body.name} already exist`);
+      } else {
+        Food.create({
+          name: req.body.name,
+          weight: req.body.weight,
+          quantity: req.body.quantity,
+          macros: {
+            protein: req.body.macros.protein,
+            carbs: req.body.macros.carbs,
+            fat: req.body.macros.fat,
+            calories: req.body.macros.calories,
+          },
+        })
+          .then(food => {
+            res.status(201).json(food);
+          })
+          .catch(error => {
+            console.error(error);
+            res.status(500).send(`Error ${error}`);
+          });
+      }
+    })
+    .catch(error => {
+      console.error(error);
+      res.status(500).send(`Error ${error}`);
+    });
 });
 
-// Deletes a food from our list by Id
-app.delete('/food-list/:id', (req, res) => {
-  let food = foodList.find(food => {
-    return food.id === req.params.id;
-  });
-
-  if (food) {
-    foodList = foodList.filter(obj => {
-      return obj.id !== req.params.id;
+// Deletes a food from our list by name
+app.delete('/food-list/:name', (req, res) => {
+  Food.findOneAndRemove({ name: req.params.name })
+    .then(food => {
+      if (!food) {
+        res.status(400).send(`${req.params.name} was not found.`);
+      } else {
+        res.status(200).send(`${req.params.name} was deleted.`);
+      }
+    })
+    .catch(error => {
+      console.error(error);
+      res.status(500).send(`Error ${error}`);
     });
-    res.status(201).send(`${req.params.id} was deleted.`);
-  }
 });
 
 // Update nutrional values of a food by food name
@@ -102,6 +103,34 @@ app.put('/food-list/:name/:macro/:value', (req, res) => {
   } else {
     res.status(404).send(`${req.params.name} was not found.`);
   }
+});
+
+app.put('/food-list/:name/:macro/:value', (req, res) => {
+  Food.findOneAndUpdate(
+    { name: req.params.name },
+    {
+      $set: {
+        name: req.body.name,
+        weight: req.body.weight,
+        quantity: req.body.quantity,
+        macros: {
+          protein: req.body.protein,
+          carbs: req.body.carbs,
+          fat: req.body.fat,
+          calories: req.body.calories,
+        },
+      },
+    },
+    { new: true },
+    (error, updatedFood) => {
+      if (error) {
+        console.error(error);
+        res.status(500).send(`Error ${error}`);
+      } else {
+        res.json(updatedFood);
+      }
+    }
+  );
 });
 
 app.listen(8080, () => {
