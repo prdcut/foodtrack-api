@@ -5,6 +5,7 @@ const express = require('express'),
 const app = express();
 const Models = require('./models.js');
 const Food = Models.Food;
+const User = Models.User;
 
 mongoose.connect('mongodb://localhost:27017/foodtrack', {
   useNewUrlParser: true,
@@ -43,7 +44,7 @@ app.post('/food-list', (req, res) => {
   Food.findOne({ name: req.body.name })
     .then(food => {
       if (food) {
-        return res.status(400).send(`${req.body.name} already exist`);
+        return res.status(400).send(`${req.body.name} already exists`);
       } else {
         Food.create({
           name: req.body.name,
@@ -89,23 +90,6 @@ app.delete('/food-list/:name', (req, res) => {
 
 // Update nutrional values of a food by food name
 app.put('/food-list/:name/:macro/:value', (req, res) => {
-  let food = foodList.find(food => {
-    return food.name === req.params.name;
-  });
-
-  if (food) {
-    food.macros[req.params.macro] = parseInt(req.params.value);
-    res
-      .status(201)
-      .send(
-        `${req.params.name}'s ${req.params.macro} was updated to ${req.params.value}.`
-      );
-  } else {
-    res.status(404).send(`${req.params.name} was not found.`);
-  }
-});
-
-app.put('/food-list/:name/:macro/:value', (req, res) => {
   Food.findOneAndUpdate(
     { name: req.params.name },
     {
@@ -133,6 +117,119 @@ app.put('/food-list/:name/:macro/:value', (req, res) => {
   );
 });
 
+// return user profile
+app.get('/users/:username', (req, res) => {
+  User.findOne({ username: req.params.username })
+    .then(user => {
+      res.status(201).json(user);
+    })
+    .catch(error => {
+      console.log(error);
+      res.status(500).send(`Error ${error}`);
+    });
+});
+
+// allow new users to register
+app.post('/users', (req, res) => {
+  User.findOne({ username: req.body.username })
+    .then(user => {
+      if (user) {
+        return res.status(400).send(`${req.body.username} already exists`);
+      } else {
+        User.create({
+          username: req.body.username,
+          password: req.body.password,
+          email: req.body.email,
+        })
+          .then(user => {
+            res.status(201).json(user);
+          })
+          .catch(error => {
+            console.log(error);
+            res.status(500).send(`Error ${error}`);
+          });
+      }
+    })
+    .catch(error => {
+      console.error(error);
+      res.status(500).send(`Error ${error}`);
+    });
+});
+
+// allow users to update their user info
+app.put('/users/:username', (req, res) => {
+  User.findOneAndUpdate(
+    { username: req.params.username },
+    {
+      $set: {
+        username: req.body.username,
+        password: req.body.password,
+        email: req.params.email,
+      },
+    },
+    { new: true },
+    (error, updatedUser) => {
+      if (error) {
+        console.error(error);
+        res.status(500).send(`Error ${error}`);
+      } else {
+        res.json(updatedUser);
+      }
+    }
+  );
+});
+
+// allow users to add a meal to their list of meals
+app.post('/users/:username/meals/:foodId', (req, res) => {
+  User.findOneAndUpdate(
+    { username: req.params.username },
+    { $addToSet: { meals: req.params.foodId } },
+    { new: true },
+    (error, updatedUser) => {
+      if (error) {
+        console.log(error);
+        res.status(500).send(`Error ${error}`);
+      } else {
+        res.json(updatedUser);
+      }
+    }
+  );
+});
+
+// allow users to remove a meal form their list of meals
+app.delete('/users/:username/meals/:foodId', (req, res) => {
+  User.findOneAndUpdate(
+    { username: req.params.username },
+    { $pull: { meals: req.params.foodId } },
+    { new: true },
+    (error, updatedUser) => {
+      if (error) {
+        console.log(error);
+        res.status(500).send(`Error ${error}`);
+      } else {
+        res.json(updatedUser);
+      }
+    }
+  );
+});
+
+// allow existing users to deregister
+app.delete('/users/:username/', (req, res) => {
+  User.findOneAndRemove({ username: req.params.username })
+    .then(user => {
+      if (!user) {
+        res.status(400).send(`${req.params.username} was not found`);
+      } else {
+        res.status(200).send(`${req.params.username} was deleted`);
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      res.status(500).send(`Error ${error}`);
+    });
+});
+
+// listen for requests
 app.listen(8080, () => {
   console.log('Your app is listening on port 8080');
 });

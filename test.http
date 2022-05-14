@@ -35,3 +35,54 @@ put http://localhost:8080/food-list/chicken/carbs/0
 
 ###
 put http://localhost:8080/food-list/chicken/fat/0
+
+###
+post http://localhost:8080/users
+Content-Type: application/json
+
+{
+  "username": "deregister",
+  "password": "12345",
+  "email": "email@emial.com"
+}
+
+###
+get http://localhost:8080/users/tester1
+
+###
+
+put http://localhost:8080/users/tester
+Content-Type: application/json
+
+{
+  "username": "tester1",
+  "password": "1234",
+  "email": "hola@gmail.com"
+}
+
+###
+post http://localhost:8080/users/:username/meals/:foodId
+Content-Type: application/json
+
+{
+  "username":"tester1",
+  "meals": "627d1c2833939a9134e31d3f"
+}
+
+###
+
+delete http://localhost:8080/users/:username/meals/:foodId
+Content-Type: application/json
+
+{
+  "username":"tester1",
+  "meals": "627d1c2833939a9134e31d3f"
+}
+
+###
+delete http://localhost:8080/users/:username
+Content-Type: application/json
+
+{
+  "username": "deregister"
+}
