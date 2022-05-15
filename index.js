@@ -8,7 +8,12 @@ const Models = require('./models.js');
 const Food = Models.Food;
 const User = Models.User;
 
-mongoose.connect('mongodb://localhost:27017/foodtrack', {
+// mongoose.connect('mongodb://localhost:27017/foodtrack', {
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true,
+// });
+
+mongoose.connect(process.env.CONNECTION_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
@@ -17,7 +22,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 const cors = require('cors');
-let allowedOrigins = ['http://localhost:8080', 'http://testsite.com'];
+let allowedOrigins = [
+  'http://localhost:8080',
+  'https://foodtrackbackend.herokuapp.com/',
+];
 app.use(
   cors({
     origin: (origin, callback) => {

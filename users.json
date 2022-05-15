@@ -1,0 +1,3 @@
+{"_id":{"$oid":"6280b04be019649a0d17a072"},"username":"tester1","password":"1234","email":"email@emial.com","meals":[{"$oid":"627d1c1f33939a9134e31d3e"}],"__v":0}
+{"_id":{"$oid":"6280b12ae019649a0d17a07b"},"username":"tester1","password":"1234","email":"email@emial.com","meals":[],"__v":0}
+{"_id":{"$oid":"6280caa1380f9831c9f42f3c"},"username":"test","password":"123","email":"email@mail.com","meals":[],"__v":0}
