@@ -20,12 +20,12 @@ let userSchema = mongoose.Schema({
   meals: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Food' }],
 });
 
-userSchema.statics.hashPassword = password => {
-  return bcrypt.hashSync(password, 10);
+userSchema.statics.hashPassword = p => {
+  return bcrypt.hashSync(p, 10);
 };
 
-userSchema.methods.validatePassword = function (password) {
-  return bcrypt.compareSync(password, this.Password);
+userSchema.methods.validatePassword = function (p) {
+  return bcrypt.compareSync(p, this.password);
 };
 
 let Food = mongoose.model('Food', foodSchema);

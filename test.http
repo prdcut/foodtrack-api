@@ -37,7 +37,17 @@ put http://localhost:8080/food-list/chicken/carbs/0
 put http://localhost:8080/food-list/chicken/fat/0
 
 ###
-post http://localhost:8080/users
+post http://localhost:8080/users 
+Content-Type: application/json
+
+{
+  "username": "deregister",
+  "password": "12345",
+  "email": "email@emial.com"
+}
+
+###
+post https://foodtrackbackend.herokuapp.com/users
 Content-Type: application/json
 
 {

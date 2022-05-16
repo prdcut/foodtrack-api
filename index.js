@@ -203,7 +203,7 @@ app.post(
       return res.status(422).json({ errors: errors.array() });
     }
 
-    let hashedPassword = User.hashPassword(req.body.Password);
+    let hashedPassword = User.hashPassword(req.body.password);
     User.findOne({ username: req.body.username })
       .then(user => {
         if (user) {
@@ -325,3 +325,7 @@ const port = process.env.PORT || 8080;
 app.listen(port, '0.0.0.0', () => {
   console.log(`Listening on Port ${port}`);
 });
+
+// app.listen(8080, () => {
+//   console.log('Your app is listening on port 8080');
+// });
