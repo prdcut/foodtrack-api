@@ -1,3 +1,4 @@
+//Global variables
 const express = require('express'),
   bodyParser = require('body-parser'),
   mongoose = require('mongoose');
@@ -8,11 +9,22 @@ const Models = require('./models.js');
 const Food = Models.Food;
 const User = Models.User;
 
+// Middlewear
+
+/* 
+  Uncomment here to run project local ⬇️
+*/
+
 // mongoose.connect('mongodb://localhost:27017/foodtrack', {
 //   useNewUrlParser: true,
 //   useUnifiedTopology: true,
 // });
 
+/* 
+  Comment out here if running project local ⬇️
+*/
+
+// Make sure to set before any app.use
 mongoose.connect(process.env.CONNECTION_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -47,7 +59,9 @@ let auth = require('./auth')(app);
 const passport = require('passport');
 require('./passport');
 
-// Gets the list of data about ALL foodList
+// Endpoints
+
+// Returns a list of all foods
 app.get(
   '/food-list',
   passport.authenticate('jwt', { session: false }),
@@ -63,7 +77,7 @@ app.get(
   }
 );
 
-// Gets the data about a single food by name
+// Returns data about single food by name
 app.get(
   '/food-list/:name',
   passport.authenticate('jwt', { session: false }),
@@ -79,7 +93,7 @@ app.get(
   }
 );
 
-// Adds data for a new food to our list of foodList.
+// Adds new food to list of foods
 app.post(
   '/food-list',
   passport.authenticate('jwt', { session: false }),
@@ -116,7 +130,7 @@ app.post(
   }
 );
 
-// Deletes a food from our list by name
+// Deletes food from list of foods
 app.delete(
   '/food-list/:name',
   passport.authenticate('jwt', { session: false }),
@@ -136,7 +150,7 @@ app.delete(
   }
 );
 
-// Update nutrional values of a food by food name
+// Updates food data of a food by name
 app.put(
   '/food-list/:name/:macro/:value',
   passport.authenticate('jwt', { session: false }),
@@ -169,7 +183,7 @@ app.put(
   }
 );
 
-// return user profile
+// Returns user profile
 app.get(
   '/users/:username',
   passport.authenticate('jwt', { session: false }),
@@ -185,7 +199,7 @@ app.get(
   }
 );
 
-// allow new users to register
+// Allows new user to register
 app.post(
   '/users',
   [
@@ -230,7 +244,7 @@ app.post(
   }
 );
 
-// allow users to update their user info
+// Allows existing user to update their info
 app.put(
   '/users/:username',
   passport.authenticate('jwt', { session: false }),
@@ -257,7 +271,7 @@ app.put(
   }
 );
 
-// allow users to add a meal to their list of meals
+// Allows user to add food to their list of meals
 app.post(
   '/users/:username/meals/:foodId',
   passport.authenticate('jwt', { session: false }),
@@ -278,7 +292,7 @@ app.post(
   }
 );
 
-// allow users to remove a meal form their list of meals
+// Allows user to remove food from their list of meals
 app.delete(
   '/users/:username/meals/:foodId',
   passport.authenticate('jwt', { session: false }),
@@ -299,7 +313,7 @@ app.delete(
   }
 );
 
-// allow existing users to deregister
+// Allows user to deregister
 app.delete(
   '/users/:username/',
   passport.authenticate('jwt', { session: false }),
@@ -319,12 +333,21 @@ app.delete(
   }
 );
 
-// listen for requests
+// Listen for requests
+
+/* 
+  Comment out here if running project local ⬇️
+*/
+
 const port = process.env.PORT || 8080;
 
 app.listen(port, '0.0.0.0', () => {
   console.log(`Listening on Port ${port}`);
 });
+
+/* 
+  Uncomment here to run project local
+*/
 
 // app.listen(8080, () => {
 //   console.log('Your app is listening on port 8080');

@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
+// Food model
 let foodSchema = mongoose.Schema({
   name: { type: String, required: true },
   weight: Number || null,
@@ -13,6 +14,7 @@ let foodSchema = mongoose.Schema({
   },
 });
 
+// User model
 let userSchema = mongoose.Schema({
   username: { type: String, required: true },
   password: { type: String, required: true },

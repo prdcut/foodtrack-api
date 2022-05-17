@@ -1,5 +1,6 @@
-const jwtSecret = 'uncorruptedSecret'; // This has to be the same key used in the JWTStrategy
+// Authentication strategy
 
+const jwtSecret = 'uncorruptedSecret'; // This has to be the same key used in the JWTStrategy
 const jwt = require('jsonwebtoken'),
   passport = require('passport');
 
@@ -8,12 +9,12 @@ require('./passport');
 let generateJWTToken = user => {
   return jwt.sign(user, jwtSecret, {
     subject: user.username,
-    expiresIn: '7d',
+    expiresIn: '7d', // Token will expire in / days
     algorithm: 'HS256', // This is the algorithm used to “sign” or encode the values of the JWT
   });
 };
 
-/* POST login. */
+// Login endpoint
 module.exports = router => {
   router.post('/login', (req, res) => {
     passport.authenticate('local', { session: false }, (error, user, info) => {
