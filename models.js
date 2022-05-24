@@ -16,7 +16,7 @@ let foodSchema = mongoose.Schema({
 
 // User model
 let userSchema = mongoose.Schema({
-  username: { type: String, required: true },
+  username: { type: String },
   password: { type: String, required: true },
   email: { type: String, required: true },
   meals: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Food' }],
