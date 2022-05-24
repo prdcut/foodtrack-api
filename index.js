@@ -219,8 +219,14 @@ app.post(
           return res.status(400).send(`${req.body.email} already exists`);
         } else {
           User.create({
-            password: hashedPassword,
             email: req.body.email,
+            password: hashedPassword,
+            gender: req.body.gender,
+            username: req.body.username,
+            birthday: req.body.birthday,
+            height: req.body.height,
+            currentWeight: req.body.currentWeight,
+            goalWeight: req.body.goalWeight,
           })
             .then(user => {
               res.status(201).json(user);

@@ -20,6 +20,11 @@ let userSchema = mongoose.Schema({
   password: { type: String, required: true },
   email: { type: String, required: true },
   meals: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Food' }],
+  gender: { type: String },
+  birthday: { type: Date },
+  height: { type: Number },
+  currentWeight: { type: Number },
+  goalWeight: { type: Number },
 });
 
 userSchema.statics.hashPassword = p => {
