@@ -235,7 +235,7 @@ app.post(
             password: hashedPassword,
             gender: req.body.gender,
             username: req.body.username,
-            birthday: req.body.birthday,
+            age: req.body.age,
             height: req.body.height,
             currentWeight: req.body.currentWeight,
             goalWeight: req.body.goalWeight,

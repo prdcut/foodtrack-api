@@ -21,7 +21,7 @@ let userSchema = mongoose.Schema({
   email: { type: String, required: true },
   meals: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Food' }],
   gender: { type: String },
-  birthday: { type: Date },
+  age: { type: Number },
   height: { type: Number },
   currentWeight: { type: Number },
   goalWeight: { type: Number },
