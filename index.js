@@ -203,6 +203,11 @@ app.get(
 app.post(
   '/users',
   [
+    check('username', 'Username is required').isLength({ min: 5, max: 15 }),
+    check(
+      'username',
+      'Username contains non alphanumeric characters - not allowed.'
+    ).isAlphanumeric(),
     check('password', 'Password is required').not().isEmpty(),
     check('email', 'Email does not appear to be valid').isEmail(),
   ],
@@ -213,7 +218,7 @@ app.post(
     }
 
     let hashedPassword = User.hashPassword(req.body.password);
-    User.findOne({ email: req.body.email })
+    User.findOne({ email: req.body.username })
       .then(user => {
         if (user) {
           return res.status(400).send(`${req.body.email} already exists`);
