@@ -89,7 +89,7 @@ app.get(
   '/food-list/:name',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
-    Food.findOne({ name: req.body.name })
+    Food.findOne({ name: req.params.name })
       .then(food => {
         res.json(food);
       })
