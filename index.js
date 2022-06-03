@@ -157,7 +157,7 @@ app.delete(
 
 // Updates food data of a food by name
 app.put(
-  '/food-list/:name/:macro/:value',
+  '/food-list/:name',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
     Food.findOneAndUpdate(
@@ -167,12 +167,10 @@ app.put(
           name: req.body.name,
           weight: req.body.weight,
           quantity: req.body.quantity,
-          macros: {
-            protein: req.body.protein,
-            carbs: req.body.carbs,
-            fat: req.body.fat,
-            calories: req.body.calories,
-          },
+          protein: req.body.protein,
+          carbs: req.body.carbs,
+          fat: req.body.fat,
+          calories: req.body.calories,
         },
       },
       { new: true },
