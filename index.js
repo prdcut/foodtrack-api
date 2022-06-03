@@ -114,12 +114,10 @@ app.post(
             name: req.body.name,
             weight: req.body.weight,
             quantity: req.body.quantity,
-            macros: {
-              protein: req.body.macros.protein,
-              carbs: req.body.macros.carbs,
-              fat: req.body.macros.fat,
-              calories: req.body.macros.calories,
-            },
+            protein: req.body.protein,
+            carbs: req.body.carbs,
+            fat: req.body.fat,
+            calories: req.body.calories,
           })
             .then(food => {
               res.status(201).json(food);
