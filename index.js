@@ -8,6 +8,8 @@ const app = express();
 const Models = require('./models.js');
 const Food = Models.Food;
 const User = Models.User;
+const Meal = Models.Meal;
+const Diary = Models.Diary;
 
 // Middlewear
 
@@ -35,25 +37,25 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 const cors = require('cors');
 app.use(cors());
-// let allowedOrigins = [
-//   'http://localhost:8080',
-//   'https://foodtrackbackend.herokuapp.com/',
-// ];
-// app.use(
-//   cors({
-//     origin: (origin, callback) => {
-//       if (!origin) return callback(null, true);
-//       if (allowedOrigins.indexOf(origin) === -1) {
-//         // If a specific origin isn’t found on the list of allowed origins
-//         let message =
-//           'The CORS policy for this application doesn’t allow access from origin ' +
-//           origin;
-//         return callback(new Error(message), false);
-//       }
-//       return callback(null, true);
-//     },
-//   })
-// );
+let allowedOrigins = [
+  'http://localhost:8080',
+  'https://foodtrackbackend.herokuapp.com/',
+];
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.indexOf(origin) === -1) {
+        // If a specific origin isn’t found on the list of allowed origins
+        let message =
+          'The CORS policy for this application doesn’t allow access from origin ' +
+          origin;
+        return callback(new Error(message), false);
+      }
+      return callback(null, true);
+    },
+  })
+);
 
 app.all('/', function (req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
@@ -74,10 +76,10 @@ app.get(
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
     Food.find()
-      .then(food => {
+      .then((food) => {
         res.status(201).json(food);
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error);
         res.status(500).send(`Error ${error}`);
       });
@@ -90,10 +92,10 @@ app.get(
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
     Food.findOne({ name: req.params.name })
-      .then(food => {
+      .then((food) => {
         res.json(food);
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error);
         res.status(500).send(`Error ${error}`);
       });
@@ -106,7 +108,7 @@ app.post(
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
     Food.findOne({ name: req.body.name })
-      .then(food => {
+      .then((food) => {
         if (food) {
           return res.status(400).send(`${req.body.name} already exists`);
         } else {
@@ -119,16 +121,16 @@ app.post(
             fat: req.body.fat,
             calories: req.body.calories,
           })
-            .then(food => {
+            .then((food) => {
               res.status(201).json(food);
             })
-            .catch(error => {
+            .catch((error) => {
               console.error(error);
               res.status(500).send(`Error ${error}`);
             });
         }
       })
-      .catch(error => {
+      .catch((error) => {
         console.error(error);
         res.status(500).send(`Error ${error}`);
       });
@@ -141,14 +143,14 @@ app.delete(
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
     Food.findOneAndRemove({ name: req.params.name })
-      .then(food => {
+      .then((food) => {
         if (!food) {
           res.status(400).send(`${req.params.name} was not found.`);
         } else {
           res.status(200).send(`${req.params.name} was deleted.`);
         }
       })
-      .catch(error => {
+      .catch((error) => {
         console.error(error);
         res.status(500).send(`Error ${error}`);
       });
@@ -186,22 +188,6 @@ app.put(
   }
 );
 
-// Returns user profile
-app.get(
-  '/users/:username',
-  passport.authenticate('jwt', { session: false }),
-  (req, res) => {
-    User.findOne({ username: req.params.username })
-      .then(user => {
-        res.status(201).json(user);
-      })
-      .catch(error => {
-        console.log(error);
-        res.status(500).send(`Error ${error}`);
-      });
-  }
-);
-
 // Allows new user to register
 app.post(
   '/users',
@@ -221,8 +207,8 @@ app.post(
     }
 
     let hashedPassword = User.hashPassword(req.body.password);
-    User.findOne({ email: req.body.username })
-      .then(user => {
+    User.findOne({ username: req.body.username })
+      .then((user) => {
         if (user) {
           return res.status(400).send(`${req.body.email} already exists`);
         } else {
@@ -235,18 +221,40 @@ app.post(
             height: req.body.height,
             currentWeight: req.body.currentWeight,
             goalWeight: req.body.goalWeight,
+            macros: {
+              protein: req.body.protein,
+              carbs: req.body.carbs,
+              fat: req.body.fat,
+              calories: req.body.calories,
+            },
           })
-            .then(user => {
+            .then((user) => {
               res.status(201).json(user);
             })
-            .catch(error => {
+            .catch((error) => {
               console.log(error);
               res.status(500).send(`Error ${error}`);
             });
         }
       })
-      .catch(error => {
+      .catch((error) => {
         console.error(error);
+        res.status(500).send(`Error ${error}`);
+      });
+  }
+);
+
+// Returns user profile
+app.get(
+  '/users/:username',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    User.findOne({ username: req.params.username })
+      .then((user) => {
+        res.status(201).json(user);
+      })
+      .catch((error) => {
+        console.log(error);
         res.status(500).send(`Error ${error}`);
       });
   }
@@ -257,14 +265,23 @@ app.put(
   '/users/:username',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
-    let hashedPassword = User.hashPassword(req.body.password);
     User.findOneAndUpdate(
       { username: req.params.username },
       {
         $set: {
+          email: req.body.email,
+          gender: req.body.gender,
           username: req.body.username,
-          password: hashedPassword,
-          email: req.params.email,
+          age: req.body.age,
+          height: req.body.height,
+          currentWeight: req.body.currentWeight,
+          goalWeight: req.body.goalWeight,
+          macros: {
+            protein: req.body.protein,
+            carbs: req.body.carbs,
+            fat: req.body.fat,
+            calories: req.body.calories,
+          },
         },
       },
       { new: true },
@@ -280,63 +297,292 @@ app.put(
   }
 );
 
-// Allows user to add food to their list of meals
-app.post(
-  '/users/:username/meals/:foodId',
-  passport.authenticate('jwt', { session: false }),
-  (req, res) => {
-    User.findOneAndUpdate(
-      { username: req.params.username },
-      { $addToSet: { meals: req.params.foodId } },
-      { new: true },
-      (error, updatedUser) => {
-        if (error) {
-          console.log(error);
-          res.status(500).send(`Error ${error}`);
-        } else {
-          res.json(updatedUser);
-        }
-      }
-    );
-  }
-);
-
-// Allows user to remove food from their list of meals
-app.delete(
-  '/users/:username/meals/:foodId',
-  passport.authenticate('jwt', { session: false }),
-  (req, res) => {
-    User.findOneAndUpdate(
-      { username: req.params.username },
-      { $pull: { meals: req.params.foodId } },
-      { new: true },
-      (error, updatedUser) => {
-        if (error) {
-          console.log(error);
-          res.status(500).send(`Error ${error}`);
-        } else {
-          res.json(updatedUser);
-        }
-      }
-    );
-  }
-);
-
 // Allows user to deregister
 app.delete(
   '/users/:username/',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
     User.findOneAndRemove({ username: req.params.username })
-      .then(user => {
+      .then((user) => {
         if (!user) {
           res.status(400).send(`${req.params.username} was not found`);
         } else {
           res.status(200).send(`${req.params.username} was deleted`);
         }
       })
-      .catch(err => {
-        console.error(err);
+      .catch((error) => {
+        console.error(error);
+        res.status(500).send(`Error ${error}`);
+      });
+  }
+);
+
+// Allows user to create a meal
+app.post(
+  '/meals',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    Meal.findOne({ name: req.body.name })
+      .then((meal) => {
+        if (meal) {
+          return res.status(400).send(`${req.body.name} already exists`);
+        } else {
+          Meal.create({
+            name: req.body.name,
+            foods: req.body.foods,
+            protein: req.body.protein,
+            carbs: req.body.carbs,
+            fat: req.body.fat,
+            calories: req.body.calories,
+          })
+            .then((meal) => {
+              res.status(201).json(meal);
+            })
+            .catch((error) => {
+              console.error(error);
+              res.status(500).send(`Error ${error}`);
+            });
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        res.status(500).send(`Error ${error}`);
+      });
+  }
+);
+
+// Returns a list of all meals
+app.get(
+  '/meals',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    Meal.find()
+      .then((meal) => {
+        res.status(201).json(meal);
+      })
+      .catch((error) => {
+        console.log(error);
+        res.status(500).send(`Error ${error}`);
+      });
+  }
+);
+
+// Allows user to update a meal
+app.put(
+  '/meals/:name',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    Meal.findOneAndUpdate(
+      { name: req.params.name },
+      {
+        $set: {
+          name: req.body.name,
+          foods: req.body.foods,
+          protein: req.body.protein,
+          carbs: req.body.carbs,
+          fat: req.body.fat,
+          calories: req.body.calories,
+        },
+      },
+      { new: true },
+      (error, updatedUser) => {
+        if (error) {
+          console.error(error);
+          res.status(500).send(`Error ${error}`);
+        } else {
+          res.json(updatedUser);
+        }
+      }
+    );
+  }
+);
+
+// Allows user to delete a meal
+app.delete(
+  '/meals/:name',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    Meal.findOneAndRemove({ name: req.params.name })
+      .then((meal) => {
+        if (!meal) {
+          res.status(400).send(`${req.params.name} was not found.`);
+        } else {
+          res.status(200).send(`${req.params.name} was deleted.`);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        res.status(500).send(`Error ${error}`);
+      });
+  }
+);
+
+// Allows user to add a meal to their profile
+app.post(
+  '/users/:username/meals/:mealId',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    User.findOneAndUpdate(
+      { username: req.params.username },
+      { $push: { meals: req.params.mealId } },
+      { new: true },
+      (error, updatedUser) => {
+        if (error) {
+          console.error(error);
+          res.status(500).send(`Error ${error}`);
+        } else {
+          res.json(updatedUser);
+        }
+      }
+    );
+  }
+);
+
+// Allows user to delete a meal from their profile
+app.delete(
+  '/users/:username/meals/:mealId',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    User.findOneAndUpdate(
+      { username: req.params.username },
+      { $pull: { meals: req.params.mealId } },
+      { new: true },
+      (error, updatedUser) => {
+        if (error) {
+          console.error(error);
+          res.status(500).send(`Error ${error}`);
+        } else {
+          res.json(updatedUser);
+        }
+      }
+    );
+  }
+);
+
+// Allows user to create a diary entry
+app.post(
+  '/diary',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    Diary.findOne({ date: req.body.date })
+      .then((diary) => {
+        if (diary) {
+          return res.status(400).send(`${req.body.diary} entry already exists`);
+        } else {
+          Diary.create({
+            date: req.body.date,
+            breakfast: req.body.breakfast,
+            lunch: req.body.lunch,
+            dinner: req.body.dinner,
+            snacks: req.body.snacks,
+            totalMacros: req.body.totalMacros,
+          })
+            .then((diary) => {
+              res.status(201).json(diary);
+            })
+            .catch((error) => {
+              console.error(error);
+              res.status(500).send(`Error ${error}`);
+            });
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        res.status(500).send(`Error ${error}`);
+      });
+  }
+);
+
+// Allows user to add a diary to their profile
+app.post(
+  '/users/:username/diary/:dateId',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    User.findOneAndUpdate(
+      { username: req.params.username },
+      { $push: { diary: req.params.dateId } },
+      { new: true },
+      (error, updatedUser) => {
+        if (error) {
+          console.error(error);
+          res.status(500).send(`Error ${error}`);
+        } else {
+          res.json(updatedUser);
+        }
+      }
+    );
+  }
+);
+
+// Returns diary entry by id
+app.get(
+  '/users/:username/diary/:dateId',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    Diary.findOne({
+      username: req.params.username,
+      _id: req.params.dateId,
+    })
+      .then((diaryEntry) => {
+        res.status(201).json(diaryEntry);
+      })
+      .catch((error) => {
+        console.log(error);
+        res.status(500).send(`Error ${error}`);
+      });
+  }
+);
+
+// Allows user to update diary entry by date id
+app.put(
+  '/users/:username/diary/:dateId',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    User.findOneAndUpdate(
+      {
+        username: req.params.username,
+        date: req.params.dateId,
+      },
+      {
+        $set: {
+          breakfast: req.body.breakfast,
+          lunch: req.body.lunch,
+          dinner: req.body.dinner,
+          snacks: req.body.snacks,
+          totalMacros: req.body.totalMacros,
+        },
+      },
+      { new: true },
+      (error, updatedUser) => {
+        if (error) {
+          console.error(error);
+          res.status(500).send(`Error ${error}`);
+        } else {
+          res.json(updatedUser);
+        }
+      }
+    );
+  }
+);
+
+// Deletes diary entry from user profile
+app.delete(
+  '/users/:username/diary/:dateId',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    Food.findOneAndRemove({
+      username: req.params.username,
+      date: req.params.dateId,
+    })
+      .then((diaryEntry) => {
+        if (!diaryEntry) {
+          res.status(400).send(`${req.params.date} was not found.`);
+        } else {
+          res.status(200).send(`${req.params.date} was deleted.`);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
         res.status(500).send(`Error ${error}`);
       });
   }
