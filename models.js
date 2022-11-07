@@ -12,20 +12,52 @@ let foodSchema = mongoose.Schema({
   calories: { type: Number, required: true },
 });
 
+// Meal model
+let mealSchema = mongoose.Schema({
+  name: String,
+  foods: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Food' }],
+  protein: Number,
+  carbs: Number,
+  fat: Number,
+  calories: Number,
+});
+
+// Diary model
+let diarySchema = mongoose.Schema({
+  date: Date,
+  breakfast: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Food' }],
+  lunch: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Food' }],
+  dinner: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Food' }],
+  snacks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Food' }],
+  totalMacros: mongoose.Schema({
+    protein: Number,
+    carbs: Number,
+    fat: Number,
+    calories: Number,
+  }),
+});
+
 // User model
 let userSchema = mongoose.Schema({
   username: { type: String, required: true },
-  password: { type: String, required: true },
+  password: String,
   email: { type: String, required: true },
-  meals: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Food' }],
-  gender: { type: String },
-  age: { type: Number },
-  height: { type: Number },
-  currentWeight: { type: Number },
-  goalWeight: { type: Number },
+  gender: String,
+  age: Number,
+  height: Number,
+  currentWeight: Number,
+  goalWeight: Number,
+  macros: mongoose.Schema({
+    protein: Number,
+    carbs: Number,
+    fat: Number,
+    calories: Number,
+  }),
+  diary: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Diary' }],
+  meals: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Meal' }],
 });
 
-userSchema.statics.hashPassword = p => {
+userSchema.statics.hashPassword = (p) => {
   return bcrypt.hashSync(p, 10);
 };
 
@@ -35,6 +67,10 @@ userSchema.methods.validatePassword = function (p) {
 
 let Food = mongoose.model('Food', foodSchema);
 let User = mongoose.model('User', userSchema);
+let Meal = mongoose.model('Meal', mealSchema);
+let Diary = mongoose.model('Diary', diarySchema);
 
 module.exports.Food = Food;
 module.exports.User = User;
+module.exports.Meal = Meal;
+module.exports.Diary = Diary;
