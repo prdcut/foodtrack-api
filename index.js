@@ -470,6 +470,7 @@ app.post(
           return res.status(400).send(`${req.body.diary} entry already exists`);
         } else {
           Diary.create({
+            currentWeight: req.body.currentWeight,
             date: req.body.date,
             breakfast: req.body.breakfast,
             lunch: req.body.lunch,

@@ -24,6 +24,7 @@ let mealSchema = mongoose.Schema({
 
 // Diary model
 let diarySchema = mongoose.Schema({
+  currentWeight: Number,
   date: Date,
   breakfast: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Food' }],
   lunch: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Food' }],
