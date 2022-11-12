@@ -534,6 +534,22 @@ app.get(
   }
 );
 
+// Returns all entries
+app.get(
+  '/diary',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    Diary.find()
+      .then((diaryEntry) => {
+        res.status(201).json(diaryEntry);
+      })
+      .catch((error) => {
+        console.log(error);
+        res.status(500).send(`Error ${error}`);
+      });
+  }
+);
+
 // Allows user to update diary entry by date id
 app.put(
   '/users/:username/diary/:dateId',
