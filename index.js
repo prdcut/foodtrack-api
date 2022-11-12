@@ -464,7 +464,7 @@ app.post(
   '/diary',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
-    Diary.findOne({ date: req.body.date })
+    Diary.findOne({ date: req.body._id })
       .then((diary) => {
         if (diary) {
           return res.status(400).send(`${req.body.diary} entry already exists`);
@@ -496,12 +496,12 @@ app.post(
 
 // Allows user to add a diary to their profile
 app.post(
-  '/users/:username/diary/:dateId',
+  '/users/:username/diary/:diaryId',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
     User.findOneAndUpdate(
       { username: req.params.username },
-      { $push: { diary: req.params.dateId } },
+      { $push: { diary: req.params.diaryId } },
       { new: true },
       (error, updatedUser) => {
         if (error) {
