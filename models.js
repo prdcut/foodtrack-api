@@ -12,31 +12,31 @@ let foodSchema = mongoose.Schema({
   calories: { type: Number, required: true },
 });
 
-// Meal model
-let mealSchema = mongoose.Schema({
-  name: String,
-  foods: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Food' }],
-  protein: Number,
-  carbs: Number,
-  fat: Number,
-  calories: Number,
-});
+// // Meal model
+// let mealSchema = mongoose.Schema({
+//   name: String,
+//   foods: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Food' }],
+//   protein: Number,
+//   carbs: Number,
+//   fat: Number,
+//   calories: Number,
+// });
 
-// Diary model
-let diarySchema = mongoose.Schema({
-  currentWeight: Number,
-  date: Date || String,
-  breakfast: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Food' }],
-  lunch: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Food' }],
-  dinner: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Food' }],
-  snacks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Food' }],
-  totalMacros: mongoose.Schema({
-    protein: Number,
-    carbs: Number,
-    fat: Number,
-    calories: Number,
-  }),
-});
+// // Diary model
+// let diarySchema = mongoose.Schema({
+//   currentWeight: Number,
+//   date: Date || String,
+//   breakfast: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Food' }],
+//   lunch: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Food' }],
+//   dinner: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Food' }],
+//   snacks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Food' }],
+//   totalMacros: mongoose.Schema({
+//     protein: Number,
+//     carbs: Number,
+//     fat: Number,
+//     calories: Number,
+//   }),
+// });
 
 // User model
 let userSchema = mongoose.Schema({
@@ -54,8 +54,37 @@ let userSchema = mongoose.Schema({
     fat: Number,
     calories: Number,
   }),
-  diary: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Diary' }],
-  meals: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Meal' }],
+  diary: [
+    mongoose.Schema({
+      date: Date || String,
+      breakfast: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Food' }],
+      lunch: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Food' }],
+      dinner: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Food' }],
+      snacks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Food' }],
+      diaryMacros: mongoose.Schema({
+        protein: Number,
+        carbs: Number,
+        fat: Number,
+        calories: Number,
+      }),
+    }),
+  ],
+  meals: [
+    mongoose.Schema({
+      name: String,
+      foods: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Food' }],
+      protein: Number,
+      carbs: Number,
+      fat: Number,
+      calories: Number,
+    }),
+  ],
+  weightHistory: [
+    mongoose.Schema({
+      weights: [Number],
+      dates: [Date || String],
+    }),
+  ],
 });
 
 userSchema.statics.hashPassword = (p) => {
@@ -68,10 +97,10 @@ userSchema.methods.validatePassword = function (p) {
 
 let Food = mongoose.model('Food', foodSchema);
 let User = mongoose.model('User', userSchema);
-let Meal = mongoose.model('Meal', mealSchema);
-let Diary = mongoose.model('Diary', diarySchema);
+// let Meal = mongoose.model('Meal', mealSchema);
+// let Diary = mongoose.model('Diary', diarySchema);
 
 module.exports.Food = Food;
 module.exports.User = User;
-module.exports.Meal = Meal;
-module.exports.Diary = Diary;
+// module.exports.Meal = Meal;
+// module.exports.Diary = Diary;

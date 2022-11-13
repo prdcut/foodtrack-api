@@ -213,10 +213,10 @@ app.post(
           return res.status(400).send(`${req.body.email} already exists`);
         } else {
           User.create({
-            email: req.body.email,
-            password: hashedPassword,
-            gender: req.body.gender,
             username: req.body.username,
+            password: hashedPassword,
+            email: req.body.email,
+            gender: req.body.gender,
             age: req.body.age,
             height: req.body.height,
             currentWeight: req.body.currentWeight,
@@ -227,6 +227,27 @@ app.post(
               fat: req.body.fat,
               calories: req.body.calories,
             },
+            diary: [
+              {
+                date: req.body.date,
+                breakfast: req.body.breakfast,
+                lunch: req.body.lunch,
+                dinner: req.body.dinner,
+                snacks: req.body.snacks,
+                diaryMacros: {
+                  protein: req.body.protein,
+                  carbs: req.body.carbs,
+                  fat: req.body.fat,
+                  calories: req.body.calories,
+                },
+              },
+            ],
+            weightHistory: [
+              {
+                weights: req.body.weights,
+                dates: req.body.dates,
+              },
+            ],
           })
             .then((user) => {
               res.status(201).json(user);
