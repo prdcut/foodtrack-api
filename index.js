@@ -227,27 +227,6 @@ app.post(
               fat: req.body.fat,
               calories: req.body.calories,
             },
-            diary: [
-              {
-                date: req.body.date,
-                breakfast: req.body.breakfast,
-                lunch: req.body.lunch,
-                dinner: req.body.dinner,
-                snacks: req.body.snacks,
-                diaryMacros: {
-                  protein: req.body.protein,
-                  carbs: req.body.carbs,
-                  fat: req.body.fat,
-                  calories: req.body.calories,
-                },
-              },
-            ],
-            weightHistory: [
-              {
-                weights: req.body.weights,
-                dates: req.body.dates,
-              },
-            ],
           })
             .then((user) => {
               res.status(201).json(user);
@@ -302,6 +281,100 @@ app.put(
             carbs: req.body.carbs,
             fat: req.body.fat,
             calories: req.body.calories,
+          },
+          diary: {
+            date: req.body.date,
+            breakfast: req.body.breakfast,
+            lunch: req.body.lunch,
+            dinner: req.body.dinner,
+            snacks: req.body.snacks,
+            diaryMacros: {
+              protein: req.body.diaryMacrosProtein,
+              carbs: req.body.diaryMacrosCarbs,
+              fat: req.body.diaryMacrosFat,
+              calories: req.body.diaryMacrosCalories,
+            },
+          },
+        },
+      },
+      { new: true },
+      (error, updatedUser) => {
+        if (error) {
+          console.error(error);
+          res.status(500).send(`Error ${error}`);
+        } else {
+          res.json(updatedUser);
+        }
+      }
+    );
+  }
+);
+
+// Allows existing user to update diary info
+app.put(
+  '/users/:username',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    User.findOneAndUpdate(
+      { username: req.params.username },
+      {
+        $addToSet: {
+          'diary.0.date': req.body.date,
+          'diary.0.breakfast': req.body.breakfast,
+          'diary.0.lunch': req.body.lunch,
+          'diary.0.dinner': req.body.dinner,
+          'diary.0.snacks': req.body.snacks,
+          'diary.0.diaryMacros': req.body.diaryMacros,
+        },
+      },
+      { new: true },
+      (error, updatedUser) => {
+        if (error) {
+          console.error(error);
+          res.status(500).send(`Error ${error}`);
+        } else {
+          res.json(updatedUser);
+        }
+      }
+    );
+  }
+);
+
+// diary: {
+//   date: req.body.date,
+//   breakfast: req.body.breakfast,
+//   lunch: req.body.lunch,
+//   dinner: req.body.dinner,
+//   snacks: req.body.snacks,
+//   diaryMacros: {
+//     protein: req.body.diaryMacrosProtein,
+//     carbs: req.body.diaryMacrosCarbs,
+//     fat: req.body.diaryMacrosFat,
+//     calories: req.body.diaryMacrosCalories,
+//   },
+// },
+
+// Allows user to add mahlzeit to diary
+app.post(
+  '/users/:username',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    User.findOneAndUpdate(
+      { username: req.params.username },
+      {
+        $push: {
+          diary: {
+            date: req.body.date,
+            breakfast: req.body.breakfast,
+            lunch: req.body.lunch,
+            dinner: req.body.dinner,
+            snacks: req.body.snacks,
+            diaryMacros: {
+              protein: req.body.diaryMacrosProtein,
+              carbs: req.body.diaryMacrosCarbs,
+              fat: req.body.diaryMacrosFat,
+              calories: req.body.diaryMacrosCalories,
+            },
           },
         },
       },

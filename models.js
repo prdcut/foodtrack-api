@@ -42,7 +42,7 @@ let foodSchema = mongoose.Schema({
 let userSchema = mongoose.Schema({
   username: { type: String, required: true },
   password: String,
-  email: { type: String, required: true },
+  email: String,
   gender: String,
   age: Number,
   height: Number,
