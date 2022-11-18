@@ -16,24 +16,29 @@ let userSchema = mongoose.Schema({
     calories: Number,
   },
   goalWeight: Number,
-  foodDiary: [
+  diary: [
     mongoose.Schema({
-      date: Date,
+      type: { type: String, required: true, enum: ['weight', 'food'] },
+      date: { type: Date, required: true },
+      weightValue: Number,
       diaryMeal: String,
-      nutritionalCont: mongoose.Schema({
-        protein: Number,
-        carbs: Number,
-        fat: Number,
-        calories: Number,
-      }),
+      nutritionalCont: {
+        type: mongoose.Schema.Types.Object,
+        ref: 'nutritionalCont',
+        required: function () {
+          return this.type === 'food';
+        },
+      },
     }),
   ],
-  weightDiary: [
-    mongoose.Schema({
-      date: Date,
-      value: Number,
-    }),
-  ],
+});
+
+// Nutritional content model
+let nutritionalContSchema = mongoose.Schema({
+  protein: Number,
+  carbs: Number,
+  fat: Number,
+  calories: Number,
 });
 
 // Food model
@@ -57,6 +62,7 @@ userSchema.methods.validatePassword = function (p) {
 
 let User = mongoose.model('user', userSchema);
 let Food = mongoose.model('food', foodSchema);
+let NutritionalCont = mongoose.model('nutritionalCont', nutritionalContSchema);
 
 module.exports.User = User;
 module.exports.Food = Food;
