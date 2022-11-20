@@ -15,6 +15,7 @@ let userSchema = mongoose.Schema({
     fat: Number,
     calories: Number,
   },
+  currentWeight: Number,
   goalWeight: Number,
   diary: [
     mongoose.Schema({

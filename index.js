@@ -223,6 +223,8 @@ app.post(
             birthdate: req.body.birthdate,
             sex: req.body.sex,
             height: req.body.height,
+            currentWeight: req.body.currentWeight,
+            goalWeight: req.body.goalWeight,
           })
             .then((user) => {
               res.status(201).json(user);
@@ -270,6 +272,8 @@ app.put(
           birthdate: req.body.birthdate,
           sex: req.body.sex,
           height: req.body.height,
+          currentWeight: req.body.currentWeight,
+          goalWeight: req.body.goalWeight,
           macros: {
             protein: req.body.protein,
             carbs: req.body.carbs,
