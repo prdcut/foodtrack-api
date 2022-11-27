@@ -20,7 +20,7 @@ let userSchema = mongoose.Schema({
   diary: [
     mongoose.Schema({
       type: { type: String, required: true, enum: ['weight', 'food'] },
-      date: { type: Date, required: true },
+      date: { type: String, required: true },
       weightValue: Number,
       diaryMeal: String,
       nutritionalCont: {
