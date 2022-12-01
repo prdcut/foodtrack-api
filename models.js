@@ -46,7 +46,7 @@ let nutritionalContSchema = mongoose.Schema({
 let foodSchema = mongoose.Schema({
   name: { type: String, unique: true, required: true, dropDups: true },
   weight: Number || null,
-  quantity: Number || null,
+  quantity: String,
   protein: Number,
   carbs: Number,
   fat: Number,
