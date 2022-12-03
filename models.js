@@ -36,6 +36,9 @@ let userSchema = mongoose.Schema({
 
 // Nutritional content model
 let nutritionalContSchema = mongoose.Schema({
+  name: String,
+  weight: Number,
+  quantity: Number | String,
   protein: Number,
   carbs: Number,
   fat: Number,
