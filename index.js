@@ -38,6 +38,7 @@ app.use(cors());
 let allowedOrigins = [
   'http://localhost:8080',
   'https://foodtrackbackend.herokuapp.com/',
+  'https://foodtrack.netlify.app',
 ];
 app.use(
   cors({
