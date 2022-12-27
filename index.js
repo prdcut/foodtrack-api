@@ -39,6 +39,7 @@ let allowedOrigins = [
   'http://localhost:8080',
   'https://foodtrackbackend.herokuapp.com/',
   'https://foodtrack.netlify.app',
+  'ws://192.168.2.111:8080/',
 ];
 app.use(
   cors({
@@ -58,7 +59,12 @@ app.use(
 
 app.all('/', function (req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', 'X-Requested-With');
+  res.header(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept'
+  );
+  res.header('Access-Control-Allow-Credentials', true);
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
   next();
 });
 
